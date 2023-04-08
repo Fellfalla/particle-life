@@ -102,7 +102,7 @@ fn main() {
     
     while let Some(event) = events.next(&mut window) {
         window.draw_2d(&event, |context, graphics, _dev| {
-            clear([1.0; 4], graphics);
+            clear([0.02; 4], graphics);
 
             // Draw particles
             for particle in draw_particles.lock().unwrap().iter() {
