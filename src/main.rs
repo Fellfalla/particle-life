@@ -20,6 +20,9 @@ const WINDOW_HEIGHT: u32 = 600;
 
 
 fn step(particles: &mut Vec<Particle>, elapsed_time: f64) {
+    let size: Vector = [WINDOW_WIDTH as f64, WINDOW_HEIGHT as f64].into();
+    let center: Vector = size / 2.0;
+
     // Update positions and velocities
     for i in 0..particles.len() {
         let mut total_force : particle::particle::Vector = [0.0, 0.0].into();
@@ -30,6 +33,14 @@ fn step(particles: &mut Vec<Particle>, elapsed_time: f64) {
 
             total_force += particles[i].calc_force(&particles[j]);
         }
+
+        // Add force towards center
+        let center_offset = center - particles[i].position;
+        let dark_energy_impact = center_offset.component_div(&size).magnitude().powf(DARK_MATTER_EXP);
+        let center_force = dark_energy_impact * DARK_MATTER;
+
+        total_force += center_force * center_offset.normalize();
+
         particles[i].velocity[0] = (1.0-particles[i].damping()) 
             * particles[i].velocity[0] + total_force[0] * elapsed_time;
         particles[i].velocity[1] = (1.0-particles[i].damping()) 

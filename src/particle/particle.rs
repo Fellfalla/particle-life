@@ -32,8 +32,8 @@ impl Particle {
 
     const FORCE_MATRIX: [[f64; ParticleTypes::COUNT]; ParticleTypes::COUNT] = [
         [1.0, 0.3, 0.0, 0.0],
-        [0.0, 1.0, 0.3, 0.0],
-        [0.0, -1.0, 1.0, 0.3],
+        [0.0, 0.4, 0.3, 0.0],
+        [0.0, -0.5, 0.7, 0.3],
         [0.3, 0.0, 0.0, 1.0],
     ];
 
