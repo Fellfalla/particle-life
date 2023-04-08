@@ -5,6 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "particle_life"
+path = "src/main.rs"
+
 [dependencies]
 piston_window = "0.126.0"
 rand = "0.8.4"
+nalgebra = "0.32"
+strum = "0.24"
+strum_macros = "0.24"
