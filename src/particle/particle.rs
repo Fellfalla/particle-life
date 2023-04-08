@@ -8,6 +8,7 @@ use strum::EnumCount;
 use strum_macros::{EnumCount as EnumCountMacro, EnumIter, FromRepr};
 
 use crate::particle::constants::*;
+use crate::particle::math;
 
 pub type Vector = SVector<f64, DIMENSIONS>;
 
@@ -30,14 +31,14 @@ impl Particle {
 
 
     const FORCE_MATRIX: [[f64; ParticleTypes::COUNT]; ParticleTypes::COUNT] = [
-        [0.3, -1.3, 0.5, 0.5],
-        [-1.1, 0.2, 1.1, -0.1],
-        [0.5, 1.0, 0., 1.0],
-        [0.5, -0.2, 1.1, -1.0],
+        [1.0, 0.3, 0.0, 0.0],
+        [0.0, 1.0, 0.3, 0.0],
+        [0.0, -1.0, 1.0, 0.3],
+        [0.3, 0.0, 0.0, 1.0],
     ];
 
     pub fn distance(&self, to: &Particle) -> Vector{
-        self.position - to.position
+        to.position - self.position
     }
 
     pub fn color (&self) -> [f32; 4] {
@@ -51,10 +52,10 @@ impl Particle {
 
     pub fn damping(&self) -> f64 {
         match self.particle_type {
-            ParticleTypes::Red => 0.01,
-            ParticleTypes::Green => 0.02,
-            ParticleTypes::Blue => 0.03,
-            ParticleTypes::YELLOW => 0.04,
+            ParticleTypes::Red => 0.5,
+            ParticleTypes::Green => 0.5,
+            ParticleTypes::Blue => 0.5,
+            ParticleTypes::YELLOW => 0.5,
         }
     }
     
@@ -66,8 +67,37 @@ impl Particle {
         let diff = self.distance(to);
         let distance = diff.magnitude().max(MIN_DISTANCE);
         let direction = diff / distance;
-        let force = self.force_coeff(&to.particle_type) / distance;
-        direction * force
+
+        // Calculate the repulsion force
+        let repulsion_force = math::clipped_interpolation(
+            distance, 
+            R_REPULSION, 
+            0., 
+            0.,
+            MAX_REPULSION_FORCE, 
+        );
+
+        let particle_force = math::clipped_interpolation(
+            distance, 
+            R_INTERACTION, 
+            0., 
+            0.,
+            self.force_coeff(&to.particle_type), 
+        );
+
+        direction * (repulsion_force + particle_force)
     }
+
+    // pub fn step(&mut self, particles: &Vec<Particle>, dt: f64) {
+    //     let mut total_force: Vector = [0.0, 0.0].into();
+    //     for j in 0..particles.len() {
+    //         total_force += self.calc_force(&particles[j]);
+    //     }
+        
+    //     self.velocity = (1.0-self.damping()) * self.velocity + total_force * dt;
+
+    //     self.position += self.velocity * dt;
+
+    // }
 
 }

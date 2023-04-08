@@ -12,13 +12,11 @@ use std::sync::{Arc, Mutex};
 //use the particle.rs file
 mod particle;
 use particle::particle::*;
+use particle::constants::*;
 
 
 const WINDOW_WIDTH: u32 = 800;
 const WINDOW_HEIGHT: u32 = 600;
-const SIM_SPEEDUP: f64 = 15.0;
-const NUM_PARTICLES: usize = 250;
-const PARTICLE_SIZE: f64 = 5.0;
 
 
 fn step(particles: &mut Vec<Particle>, elapsed_time: f64) {
